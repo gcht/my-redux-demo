@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
     entry: './index.jsx',
     output:{
@@ -6,14 +8,21 @@ module.exports = {
     devtool: '#source-map',
     //devtool: '#eval-source-map',
     
+    
+    plugins: [
+        
+        
+    ],
     module:{
-        loaders:[{
+        rules:[{
             test: /\.jsx?$/,
-            exclude: /(node_modules|bower_components)/,
-            loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
-            query: {
-                presets: ['es2015','react']
-            }
+            use:[{                
+                loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
+                options: {
+                    presets: ['es2015','react']
+                }
+            }],
+            exclude: /(node_modules|bower_components)/
         }]
     }
 

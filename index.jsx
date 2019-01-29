@@ -3,22 +3,26 @@ import {render} from 'react-dom';
 import { createStore, bindActionCreators } from "redux";
 import {Provider, connect} from 'react-redux';
 
-function changeText(){
+//Action
+function changeTextAction(){
     return {
         type: 'changeTxt'
     }
 }
-function clickButton(){
+function clickButtonAction(){
     return {
         type: 'buttonClick'
     }
 }
 
 
+
+//----------------------- reducer -----------------------------------------
+
+//最初状态
 const initialState = {
     text: 'hello'
 }
-
 function myApp(state = initialState, actions){
     debugger;
     switch(actions.type){
@@ -26,7 +30,7 @@ function myApp(state = initialState, actions){
             text: state.text == 'hello'?'world':'hello'
         }
         case 'buttonClick': return {
-            text: 'Yon click the button at ' + (new Date()).toLocaleString()
+            text: '~~~ +-+ Yon click the button at ' + (new Date()).toLocaleString()
         }
         default:return{
             text:'hello'
@@ -35,6 +39,9 @@ function myApp(state = initialState, actions){
 }
 
 
+
+
+// --------------- Store -----------------------------------------------------
 let store = createStore(myApp);
 
 
@@ -46,7 +53,7 @@ class TextChange extends React.Component {
 
     textChangeHandler(){
         debugger;
-        this.props.actions.changeText();
+        this.props.txtHandlers();
     }
 
     render(){
@@ -62,7 +69,7 @@ class ButtonClick extends React.Component {
 
     buttonClickHandler(){
         debugger;
-        this.props.actions.clickButton();
+        this.props.btnHandlers();
     }
 
     render(){
@@ -78,11 +85,12 @@ class App extends React.Component{
     }
     
     render(){
-        const {actions, text} = this.props;
+        const {handlers, text} = this.props;
+   
         return (
         <div>
-            <TextChange  actions={actions} text = {text}></TextChange>
-            <ButtonClick actions={actions}></ButtonClick>
+            <TextChange  txtHandlers={handlers.changeText} text = {text}></TextChange>
+            <ButtonClick btnHandlers={handlers.clickButton}></ButtonClick>
         </div>
         )
         
@@ -92,20 +100,35 @@ class App extends React.Component{
 
 
 
-function mapState2Props(state){
-    return {text:state.text};
+function mapState2Props123(state){
+    return {
+        text:state.text        
+    };
+
 }
 
-function mapDispatch2Props(dispatch){
+function mapDispatch2Props_1(dispatch){
     return {
-        actions: bindActionCreators({
-            changeText:changeText,
-            clickButton:clickButton
+        handlers: bindActionCreators({
+            changeText: changeTextAction,
+            clickButton: clickButtonAction
         },dispatch)
     }
 }
 
-App = connect(mapState2Props,mapDispatch2Props)(App)
+function mapDispatch2Props_2(dispatch){
+    return {
+        handlers: {
+            changeText: ()=>dispatch(changeTextAction()),
+            clickButton: ()=>dispatch(clickButtonAction())
+        }
+    }
+}
+
+//---------------------------------------------------------------------
+
+App = connect(mapState2Props123,mapDispatch2Props_1)(App)
+//App = connect(mapState2Props123,mapDispatch2Props_2)(App)
 
 render(
     <Provider store = {store}>
